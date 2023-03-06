@@ -1,0 +1,15 @@
+[package]
+name = "vban"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+anyhow = "1.0.69"
+byteorder = "1.4.3"
+clap = { version = "4.1.8", features = ["derive"] }
+cpal = "0.15.0"
+dasp_sample = "0.11.0"
+ringbuf = "0.3.2"
+vban = { version = "0.1.0-alpha1", path = "../vban-rs" }
