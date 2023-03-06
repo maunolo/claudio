@@ -1,7 +1,8 @@
+use super::utils::socket_addrs_from_args;
 use anyhow::{anyhow, Result};
-use std::mem::MaybeUninit;
-use std::net::UdpSocket;
+use std::net::{IpAddr, UdpSocket};
 use std::sync::Arc;
+use std::{mem::MaybeUninit, net::SocketAddr};
 
 use byteorder::{ByteOrder, LittleEndian};
 use cpal::{
@@ -67,6 +68,37 @@ where
     Ok(())
 }
 
+fn check_src(args: &super::ReceptorArgs, src: &SocketAddr) -> Result<()> {
+    if src.ip() != args.ip_address.parse::<IpAddr>()? {
+        return Err(anyhow!("Wrong source"));
+    }
+
+    Ok(())
+}
+
+fn check_audio_pkt(args: &super::ReceptorArgs, pkt: &vban::Packet) -> Result<()> {
+    let header = pkt.header();
+
+    // Check stream name
+    if header.stream_name() != args.stream_name {
+        return Err(anyhow!("Wrong stream name"));
+    }
+
+    if header.num_channels() != args.channels {
+        return Err(anyhow!("Wrong number of channels"));
+    }
+
+    if !matches!(header.sub_protocol(), vban::SubProtocol::Audio) {
+        return Err(anyhow!("Wrong sub protocol"));
+    }
+
+    if !matches!(header.codec(), vban::Codec::PCM) {
+        return Err(anyhow!("Wrong codec"));
+    }
+
+    Ok(())
+}
+
 pub fn receptor(args: super::ReceptorArgs) -> Result<()> {
     let host = cpal::default_host();
     let device = host
@@ -96,33 +128,26 @@ pub fn receptor(args: super::ReceptorArgs) -> Result<()> {
         Ok(())
     });
 
-    let socket = UdpSocket::bind("0.0.0.0:6980")?;
+    let addr = socket_addrs_from_args("0.0.0.0", args.port)?;
+    let socket = UdpSocket::bind(addr)?;
 
     loop {
         let mut buf = [0; vban::MAX_PACKET_SIZE];
         let result = socket.recv_from(&mut buf);
         match result {
-            Ok((amt, _src)) => {
-                // println!("Received {} bytes from {}", amt, src);
-
+            Ok((amt, src)) => {
                 // Parse packet
                 let pkt = vban::Packet::try_from(&buf[..amt]);
 
                 match pkt {
                     Ok(pkt) => {
-                        // Check IP of src
-                        // println!("IP: {}", src.ip());
+                        if let Ok(_) = check_src(&args, &src) {
+                            // Check packet
+                            check_audio_pkt(&args, &pkt)?;
 
-                        // Check stream name
-                        if pkt.header().stream_name() == "AudioRedmiBook" {
-                            let _data_size = amt - vban::HEADER_SIZE;
-                            if let vban::SubProtocol::Audio = pkt.header().sub_protocol() {
-                                if let vban::Codec::PCM = pkt.header().codec() {
-                                    for sample in pkt.data.chunks_exact(2) {
-                                        let sample = LittleEndian::read_i16(&sample);
-                                        producer.push(sample).ok();
-                                    }
-                                }
+                            for sample in pkt.data.chunks_exact(2) {
+                                let sample = LittleEndian::read_i16(&sample);
+                                producer.push(sample).ok();
                             }
                         }
                     }

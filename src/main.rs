@@ -1,5 +1,6 @@
 mod emitter;
 mod receptor;
+mod utils;
 
 use anyhow::Result;
 use clap::{Args, Parser, Subcommand};
@@ -25,15 +26,49 @@ enum Commands {
 #[derive(Args, Debug)]
 pub struct ReceptorArgs {
     /// The latency in milliseconds from the input stream
-    #[arg(short, long, default_value = "16")]
+    #[arg(short = 'l', default_value = "16")]
     latency: u32,
+
+    /// The name of the stream to listen to
+    #[arg(short = 's', required = true)]
+    stream_name: String,
+
+    /// The number of channels to listen to
+    /// (1 for mono, 2 for stereo, etc.)
+    #[arg(short = 'c', default_value = "2")]
+    channels: u8,
+
+    /// The IP address of the VBAN emitter
+    /// (e.g. 192.168.0.1)
+    #[arg(short = 'i', required = true)]
+    ip_address: String,
+
+    /// The port of this VBAN receptor
+    /// (e.g. 6980)
+    #[arg(short = 'p', default_value = "6980")]
+    port: u16,
 }
 
 #[derive(Args, Debug)]
 pub struct EmitterArgs {
-    /// The latency in milliseconds from the output stream
-    #[arg(short, long, default_value = "16")]
-    latency: u32,
+    /// The name of the stream to listen to
+    #[arg(short = 's', required = true)]
+    stream_name: String,
+
+    /// The number of channels to listen to
+    /// (1 for mono, 2 for stereo, etc.)
+    #[arg(short = 'c', default_value = "2")]
+    channels: u8,
+
+    /// The IP address of the VBAN receiver
+    /// (e.g. 192.168.0.1)
+    #[arg(short = 'i', required = true)]
+    ip_address: String,
+
+    /// The port of the VBAN receiver
+    /// (e.g. 6980)
+    #[arg(short = 'p', default_value = "6980")]
+    port: u16,
 }
 
 fn main() -> Result<()> {
@@ -41,10 +76,14 @@ fn main() -> Result<()> {
 
     match cli.command {
         Commands::Receptor(args) => {
-            receptor(args).ok();
+            if let Err(e) = receptor(args) {
+                eprintln!("Error: {}", e);
+            }
         }
         Commands::Emitter(args) => {
-            emitter(args).ok();
+            if let Err(e) = emitter(args) {
+                eprintln!("Error: {}", e);
+            }
         }
     }
 
