@@ -1,11 +1,12 @@
 mod emitter;
+mod list_devices;
 mod receptor;
 mod utils;
 
-use anyhow::Result;
 use clap::{Args, Parser, Subcommand};
 
 use emitter::emitter;
+use list_devices::list_devices;
 use receptor::receptor;
 
 #[derive(Parser, Debug)]
@@ -21,6 +22,8 @@ enum Commands {
     Receptor(ReceptorArgs),
     /// Send audio to a VBAN stream
     Emitter(EmitterArgs),
+    /// List audio devices
+    ListDevices,
 }
 
 #[derive(Args, Debug)]
@@ -47,6 +50,13 @@ pub struct ReceptorArgs {
     /// (e.g. 6980)
     #[arg(short = 'p', default_value = "6980")]
     port: u16,
+
+    /// The output audio device name to use or "default",
+    /// you can use the "list-devices" command
+    /// to list all available output device names
+    /// (e.g. "default")
+    #[arg(short = 'd', default_value = "default")]
+    device: String,
 }
 
 #[derive(Args, Debug)]
@@ -69,9 +79,16 @@ pub struct EmitterArgs {
     /// (e.g. 6980)
     #[arg(short = 'p', default_value = "6980")]
     port: u16,
+
+    /// The audio device name to use or "default",
+    /// you can use the "list-devices" command
+    /// to list all available device names
+    /// (e.g. "default")
+    #[arg(short = 'd', default_value = "default")]
+    device: String,
 }
 
-fn main() -> Result<()> {
+fn main() {
     let cli = Cli::parse();
 
     match cli.command {
@@ -85,7 +102,16 @@ fn main() -> Result<()> {
                 eprintln!("Error: {}", e);
             }
         }
+        Commands::ListDevices => {
+            if let Err(e) = list_devices() {
+                eprintln!("Error: {}", e);
+            }
+        }
     }
+}
 
-    Ok(())
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn test_cli() {}
 }
