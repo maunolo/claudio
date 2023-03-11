@@ -14,10 +14,10 @@ This tool is not affiliated with VBAN.
 
 ## Receptor
 ```sh
-    vban receptor -s <YOUR_STREAM_NAME_HERE> -i <IP_TO_RECEIVE_STREAM_FROM_HERE>
+vban receptor -s <YOUR_STREAM_NAME_HERE> -i <IP_TO_RECEIVE_STREAM_FROM_HERE>
 ```
 
 ## Emitter
 ```sh
-    vban emitter -s <YOUR_STREAM_NAME_HERE> -i <IP_TO_SEND_STREAM_TO_HERE>
+vban emitter -s <YOUR_STREAM_NAME_HERE> -i <IP_TO_SEND_STREAM_TO_HERE>
 ```
