@@ -9,8 +9,25 @@ use emitter::emitter;
 use list_devices::list_devices;
 use receptor::receptor;
 
+const LONG_ABOUT: &str = "
+This tool allows you to send and receive audio over a network using the VBAN protocol.
+VBAN is a protocol for sending audio over a network.
+
+This tool is a work in progress. It is not yet feature complete and may not work as expected.
+Please report any issues you encounter on the GitHub page.
+
+Only supports 48kHz, PCM 16-bits, 2-channels audio for now. This will be expanded in the future.
+
+This tool is not affiliated with VBAN.
+";
+
 #[derive(Parser, Debug)]
-#[command(author = "Maunolo", version = "0.1.0", about = "VBAN audio command line tool", long_about = None)]
+#[command(
+    author = "Maunolo",
+    version = "0.3.0",
+    about = "VBAN audio command line tool",
+    long_about = LONG_ABOUT
+)]
 struct Cli {
     #[command(subcommand)]
     command: Commands,
