@@ -13,3 +13,9 @@ cpal = "0.15.0"
 dasp_sample = "0.11.0"
 ringbuf = "0.3.2"
 vban = { git = "https://github.com/maunolo/vban-rs" }
+
+[profile.release]
+strip = true # Automatically strip symbols from the binary
+opt-level = "s" # Optimize for size
+lto = true # Enable link time optimization
+codegen-units = 1 # Maximize size reduction optimizations

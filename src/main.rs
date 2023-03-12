@@ -1,3 +1,5 @@
+// #![windows_subsystem = "windows"] // Hide console window on Windows
+
 mod emitter;
 mod list_devices;
 mod receptor;
