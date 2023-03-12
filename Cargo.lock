@@ -823,7 +823,8 @@ checksum = "775c11906edafc97bc378816b94585fbd9a054eabaf86fdd0ced94af449efab7"
 
 [[package]]
 name = "vban"
-version = "0.1.0-alpha1"
+version = "0.2.0-alpha1"
+source = "git+https://github.com/maunolo/vban-rs#802ba976d8f21f628fc69b92bfd5757493156561"
 dependencies = [
  "byteorder",
  "num-derive",
@@ -840,7 +841,7 @@ dependencies = [
  "cpal",
  "dasp_sample",
  "ringbuf",
- "vban 0.1.0-alpha1",
+ "vban 0.2.0-alpha1",
 ]
 
 [[package]]

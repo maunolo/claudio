@@ -12,4 +12,4 @@ clap = { version = "4.1.8", features = ["derive"] }
 cpal = "0.15.0"
 dasp_sample = "0.11.0"
 ringbuf = "0.3.2"
-vban = { version = "0.1.0-alpha1", path = "../vban-rs" }
+vban = { git = "https://github.com/maunolo/vban-rs" }
