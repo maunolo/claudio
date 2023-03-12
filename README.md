@@ -21,3 +21,13 @@ vban receptor -s <YOUR_STREAM_NAME_HERE> -i <IP_TO_RECEIVE_STREAM_FROM_HERE>
 ```sh
 vban emitter -s <YOUR_STREAM_NAME_HERE> -i <IP_TO_SEND_STREAM_TO_HERE>
 ```
+
+## List devices
+```sh
+vban list-devices
+```
+
+## Help
+```sh
+vban help
+```
