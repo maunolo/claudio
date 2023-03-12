@@ -27,8 +27,7 @@ impl VbanReceptorSocket {
         args: &crate::ReceptorArgs,
         mut producer: VbanStreamProducer,
         should_run_callback: F,
-    ) -> Result<()>
-    where
+    ) where
         F: Fn() -> bool,
     {
         while should_run_callback() {
@@ -42,8 +41,6 @@ impl VbanReceptorSocket {
                 Err(e) => println!("Warning: {}", e),
             }
         }
-
-        Ok(())
     }
 
     fn receive_packet(&mut self, args: &crate::ReceptorArgs) -> Result<vban::Packet> {

@@ -6,7 +6,7 @@ use ringbuf::{Consumer, HeapRb, Producer, SharedRb};
 pub type VbanStreamConsumer = Consumer<i16, Arc<SharedRb<i16, Vec<MaybeUninit<i16>>>>>;
 pub type VbanStreamProducer = Producer<i16, Arc<SharedRb<i16, Vec<MaybeUninit<i16>>>>>;
 
-pub fn start_ring_buffer(
+pub fn start_buffer(
     args: &crate::ReceptorArgs,
     config: &SupportedStreamConfig,
 ) -> (VbanStreamProducer, VbanStreamConsumer) {

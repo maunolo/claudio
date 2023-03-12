@@ -17,9 +17,9 @@ pub struct VbanEmitterStream {
     host: cpal::Host,
     device: Arc<cpal::Device>,
     stream: Option<cpal::Stream>,
-    socket: Arc<UdpSocket>,
+    bind_address_pool: Vec<SocketAddr>,
     header: vban::Header,
-    target_address: Arc<SocketAddr>,
+    target_address: SocketAddr,
 }
 
 impl VbanEmitterStream {
@@ -30,18 +30,17 @@ impl VbanEmitterStream {
                 .ok_or(anyhow!("no input device available"))?,
         );
         let addrs = (1..=10)
-            .map(|i| SocketAddr::from(([0, 0, 0, 0], 6980 + i)))
+            .map(|i| SocketAddr::from(([0, 0, 0, 0], args.port + i)))
             .collect::<Vec<SocketAddr>>();
 
-        let socket = Arc::new(UdpSocket::bind(&addrs[..])?);
         let header = vban::Header::new(&args.stream_name);
-        let target_address = Arc::new(SocketAddr::new(args.ip_address.parse()?, args.port));
+        let target_address = SocketAddr::new(args.ip_address.parse()?, args.port);
 
         Ok(Self {
             host,
             device,
             stream: None,
-            socket,
+            bind_address_pool: addrs,
             header,
             target_address,
         })
@@ -78,8 +77,6 @@ impl VbanEmitterStream {
 
     pub fn should_run(&self, args: &crate::EmitterArgs) -> bool {
         if args.device == "default" && !self.device.is_default_input(&self.host) {
-            self.pause().ok();
-
             return false;
         }
 
@@ -87,21 +84,19 @@ impl VbanEmitterStream {
     }
 
     fn build_stream_for_sample_format(&self, sample_format: SampleFormat) -> Result<cpal::Stream> {
-        let stream = match sample_format {
-            SampleFormat::I8 => self.build_stream::<i8>()?,
-            SampleFormat::I16 => self.build_stream::<i16>()?,
-            SampleFormat::I32 => self.build_stream::<i32>()?,
-            SampleFormat::I64 => self.build_stream::<i64>()?,
-            SampleFormat::U8 => self.build_stream::<u8>()?,
-            SampleFormat::U16 => self.build_stream::<u16>()?,
-            SampleFormat::U32 => self.build_stream::<u32>()?,
-            SampleFormat::U64 => self.build_stream::<u64>()?,
-            SampleFormat::F32 => self.build_stream::<f32>()?,
-            SampleFormat::F64 => self.build_stream::<f64>()?,
+        match sample_format {
+            SampleFormat::I8 => self.build_stream::<i8>(),
+            SampleFormat::I16 => self.build_stream::<i16>(),
+            SampleFormat::I32 => self.build_stream::<i32>(),
+            SampleFormat::I64 => self.build_stream::<i64>(),
+            SampleFormat::U8 => self.build_stream::<u8>(),
+            SampleFormat::U16 => self.build_stream::<u16>(),
+            SampleFormat::U32 => self.build_stream::<u32>(),
+            SampleFormat::U64 => self.build_stream::<u64>(),
+            SampleFormat::F32 => self.build_stream::<f32>(),
+            SampleFormat::F64 => self.build_stream::<f64>(),
             _ => unreachable!("Unsupported sample format: {:?}", sample_format),
-        };
-
-        Ok(stream)
+        }
     }
 
     fn build_stream<T>(&self) -> Result<cpal::Stream>
@@ -112,7 +107,7 @@ impl VbanEmitterStream {
         let mut frame_count = 0;
 
         let header = self.header.clone();
-        let socket = self.socket.clone();
+        let socket = UdpSocket::bind(&self.bind_address_pool[..])?;
         let target_address = self.target_address.clone();
 
         let stream = self.device.build_input_stream(
