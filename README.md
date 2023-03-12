@@ -6,7 +6,9 @@ VBAN is a protocol for sending audio over a network.
 This tool is a work in progress. It is not yet feature complete and may not work as expected.
 Please report any issues you encounter on the GitHub page.
 
-Only supports 48kHz, PCM 16-bits, 2-channels audio for now.
+Only supports 48kHz, 2-channels audio devices for now, 
+if your using this to connect to a voicemetter application running vban in another
+pc, make sure to have this setting in the stream: 48kHz, 2-channels, PCM 16 bits.
 
 This tool is not affiliated with VBAN.
 
