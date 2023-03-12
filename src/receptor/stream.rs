@@ -87,7 +87,7 @@ impl VbanReceptorStream {
             SampleFormat::U64 => self.build_stream::<u64>(consumer),
             SampleFormat::F32 => self.build_stream::<f32>(consumer),
             SampleFormat::F64 => self.build_stream::<f64>(consumer),
-            _ => panic!("Unsupported sample format"),
+            _ => unreachable!("Unsupported sample format: {:?}", sample_format),
         }
     }
 

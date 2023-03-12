@@ -87,13 +87,18 @@ impl VbanEmitterStream {
     }
 
     fn build_stream_for_sample_format(&self, sample_format: SampleFormat) -> Result<cpal::Stream> {
-        let sample_format = sample_format;
-
         let stream = match sample_format {
-            SampleFormat::F32 => self.build_stream::<f32>()?,
+            SampleFormat::I8 => self.build_stream::<i8>()?,
             SampleFormat::I16 => self.build_stream::<i16>()?,
+            SampleFormat::I32 => self.build_stream::<i32>()?,
+            SampleFormat::I64 => self.build_stream::<i64>()?,
+            SampleFormat::U8 => self.build_stream::<u8>()?,
             SampleFormat::U16 => self.build_stream::<u16>()?,
-            _ => unreachable!("unsupported sample format: {:?}", sample_format),
+            SampleFormat::U32 => self.build_stream::<u32>()?,
+            SampleFormat::U64 => self.build_stream::<u64>()?,
+            SampleFormat::F32 => self.build_stream::<f32>()?,
+            SampleFormat::F64 => self.build_stream::<f64>()?,
+            _ => unreachable!("Unsupported sample format: {:?}", sample_format),
         };
 
         Ok(stream)
