@@ -23,7 +23,7 @@ pub struct VbanEmitterStream {
 }
 
 impl VbanEmitterStream {
-    pub fn new(args: &crate::EmitterArgs) -> Result<Self> {
+    pub fn new(args: &crate::vban::EmitterArgs) -> Result<Self> {
         let host = cpal::default_host();
         let device = Arc::new(
             host.find_input_device(&args.device)
@@ -75,7 +75,7 @@ impl VbanEmitterStream {
         Ok(self.stream.as_ref().ok_or_else(error_fn)?)
     }
 
-    pub fn should_run(&self, args: &crate::EmitterArgs) -> bool {
+    pub fn should_run(&self, args: &crate::vban::EmitterArgs) -> bool {
         if args.device == "default" && !self.device.is_default_input(&self.host) {
             return false;
         }

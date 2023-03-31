@@ -18,7 +18,7 @@ pub struct VbanReceptorStream {
 }
 
 impl VbanReceptorStream {
-    pub fn new(args: &crate::ReceptorArgs) -> Result<Self> {
+    pub fn new(args: &crate::vban::ReceptorArgs) -> Result<Self> {
         let host = cpal::default_host();
         let device = Arc::new(
             host.find_output_device(&args.device)
@@ -61,7 +61,7 @@ impl VbanReceptorStream {
         Ok(self.device.default_output_config()?)
     }
 
-    pub fn should_run(&self, args: &crate::ReceptorArgs) -> bool {
+    pub fn should_run(&self, args: &crate::vban::ReceptorArgs) -> bool {
         if args.device == "default" && !self.device.is_default_output(&self.host) {
             self.pause().ok();
 
@@ -118,20 +118,13 @@ impl VbanReceptorStream {
         T: SizedSample + FromSample<i16> + FromSample<f32> + Send + Sync,
     {
         move |data: &mut [T], _: &cpal::OutputCallbackInfo| {
-            let mut input_fell_behind = false;
             for frame in data.chunks_mut(channels) {
                 for sample in frame {
                     *sample = match consumer.pop() {
                         Some(s) => s.to_sample::<T>(),
-                        None => {
-                            input_fell_behind = true;
-                            0.0.to_sample::<T>()
-                        }
+                        None => 0.0.to_sample::<T>(),
                     };
                 }
-            }
-            if input_fell_behind {
-                println!("Warning: Input stream fell behind: try increasing latency");
             }
         }
     }

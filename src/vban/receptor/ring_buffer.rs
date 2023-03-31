@@ -7,7 +7,7 @@ pub type VbanStreamConsumer = Consumer<i16, Arc<SharedRb<i16, Vec<MaybeUninit<i1
 pub type VbanStreamProducer = Producer<i16, Arc<SharedRb<i16, Vec<MaybeUninit<i16>>>>>;
 
 pub fn start_buffer(
-    args: &crate::ReceptorArgs,
+    args: &crate::vban::ReceptorArgs,
     config: &SupportedStreamConfig,
 ) -> (VbanStreamProducer, VbanStreamConsumer) {
     let latency_frames = (args.latency as f32 / 1_000.0) * config.sample_rate().0 as f32;

@@ -4,7 +4,7 @@ use anyhow::Result;
 
 use self::stream::VbanEmitterStream;
 
-pub fn emitter(args: super::EmitterArgs) -> Result<()> {
+pub fn emitter(args: crate::vban::EmitterArgs) -> Result<()> {
     let mut stream = VbanEmitterStream::new(&args)?;
     stream.setup_stream()?;
     stream.play()?;

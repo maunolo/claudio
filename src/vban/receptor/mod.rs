@@ -6,7 +6,7 @@ use anyhow::Result;
 
 use self::{socket::VbanReceptorSocket, stream::VbanReceptorStream};
 
-pub fn receptor(args: crate::ReceptorArgs) -> Result<()> {
+pub fn receptor(args: crate::vban::ReceptorArgs) -> Result<()> {
     let mut stream = VbanReceptorStream::new(&args)?;
 
     let (producer, consumer) = ring_buffer::start_buffer(&args, &stream.device_config()?);

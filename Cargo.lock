@@ -159,6 +159,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "claudio"
+version = "0.4.0"
+dependencies = [
+ "anyhow",
+ "byteorder",
+ "clap",
+ "cpal",
+ "dasp_sample",
+ "ringbuf",
+ "vban",
+]
+
+[[package]]
 name = "combine"
 version = "4.6.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -829,19 +842,6 @@ dependencies = [
  "byteorder",
  "num-derive",
  "num-traits",
-]
-
-[[package]]
-name = "vban"
-version = "0.4.0"
-dependencies = [
- "anyhow",
- "byteorder",
- "clap",
- "cpal",
- "dasp_sample",
- "ringbuf",
- "vban 0.2.0-alpha1",
 ]
 
 [[package]]

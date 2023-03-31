@@ -12,13 +12,7 @@ impl Host for cpal::Host {
             "default" => self.default_input_device(),
             _ => {
                 if let Ok(mut devices) = self.devices() {
-                    devices.find(|d| {
-                        if let Ok(d_name) = d.name() {
-                            d_name == name
-                        } else {
-                            false
-                        }
-                    })
+                    devices.find_by_name(name)
                 } else {
                     None
                 }
@@ -31,13 +25,7 @@ impl Host for cpal::Host {
             "default" => self.default_output_device(),
             _ => {
                 if let Ok(mut devices) = self.devices() {
-                    devices.find(|d| {
-                        if let Ok(d_name) = d.name() {
-                            d_name == name
-                        } else {
-                            false
-                        }
-                    })
+                    devices.find_by_name(name)
                 } else {
                     None
                 }
@@ -111,24 +99,12 @@ impl Device for cpal::Device {
 }
 
 pub trait Devices {
-    fn find_input(&mut self, name: &str) -> Option<cpal::Device>;
-
-    fn find_output(&mut self, name: &str) -> Option<cpal::Device>;
+    fn find_by_name(&mut self, name: &str) -> Option<cpal::Device>;
 }
 
 impl Devices for cpal::Devices {
-    fn find_input(&mut self, name: &str) -> Option<cpal::Device> {
-        self.filter(|d| d.is_input()).find(|d| {
-            if let Ok(d_name) = d.name() {
-                d_name == name
-            } else {
-                false
-            }
-        })
-    }
-
-    fn find_output(&mut self, name: &str) -> Option<cpal::Device> {
-        self.filter(|d| d.is_output()).find(|d| {
+    fn find_by_name(&mut self, name: &str) -> Option<cpal::Device> {
+        self.find(|d| {
             if let Ok(d_name) = d.name() {
                 d_name == name
             } else {

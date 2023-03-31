@@ -12,7 +12,7 @@ pub struct VbanReceptorSocket {
 }
 
 impl VbanReceptorSocket {
-    pub fn new(args: &crate::ReceptorArgs) -> Result<Self> {
+    pub fn new(args: &crate::vban::ReceptorArgs) -> Result<Self> {
         let addr = SocketAddr::new("0.0.0.0".parse()?, args.port);
         let socket = UdpSocket::bind(addr)?;
 
@@ -24,7 +24,7 @@ impl VbanReceptorSocket {
 
     pub fn start_receive_loop<F>(
         mut self,
-        args: &crate::ReceptorArgs,
+        args: &crate::vban::ReceptorArgs,
         mut producer: VbanStreamProducer,
         should_run_callback: F,
     ) where
@@ -43,7 +43,7 @@ impl VbanReceptorSocket {
         }
     }
 
-    fn receive_packet(&mut self, args: &crate::ReceptorArgs) -> Result<vban::Packet> {
+    fn receive_packet(&mut self, args: &crate::vban::ReceptorArgs) -> Result<vban::Packet> {
         let (amt, src) = self.socket.recv_from(&mut self.buf).context(format!(
             "Failed to receive packet from socket: {:?}",
             self.socket
@@ -59,7 +59,7 @@ impl VbanReceptorSocket {
     }
 }
 
-fn check_src(args: &crate::ReceptorArgs, src: &SocketAddr) -> Result<()> {
+fn check_src(args: &crate::vban::ReceptorArgs, src: &SocketAddr) -> Result<()> {
     if src.ip()
         != args
             .ip_address
@@ -72,7 +72,7 @@ fn check_src(args: &crate::ReceptorArgs, src: &SocketAddr) -> Result<()> {
     Ok(())
 }
 
-fn check_audio_pkt(args: &crate::ReceptorArgs, pkt: &vban::Packet) -> Result<()> {
+fn check_audio_pkt(args: &crate::vban::ReceptorArgs, pkt: &vban::Packet) -> Result<()> {
     let header = pkt.header();
 
     // Check stream name
