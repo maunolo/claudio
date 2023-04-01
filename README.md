@@ -1,4 +1,4 @@
-# VBAN audio command line tool
+# Audio command line tool (claudio)
 
 This tool allows you to send and receive audio over a network using the VBAN protocol.
 VBAN is a protocol for sending audio over a network.
@@ -16,17 +16,17 @@ This tool is not affiliated with VBAN.
 
 ## Receptor
 ```sh
-vban receptor -s <YOUR_STREAM_NAME_HERE> -i <IP_TO_RECEIVE_STREAM_FROM_HERE>
+claudio vban receptor -s <YOUR_STREAM_NAME_HERE> -i <IP_TO_RECEIVE_STREAM_FROM_HERE>
 ```
 
 ## Emitter
 ```sh
-vban emitter -s <YOUR_STREAM_NAME_HERE> -i <IP_TO_SEND_STREAM_TO_HERE>
+claudio vban emitter -s <YOUR_STREAM_NAME_HERE> -i <IP_TO_SEND_STREAM_TO_HERE>
 ```
 
 ## List devices
 ```sh
-vban list-devices
+claudio list-devices
 ```
 
 ## Help
