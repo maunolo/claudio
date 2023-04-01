@@ -1,7 +1,6 @@
 // #![windows_subsystem = "windows"] // Hide console window on Windows
 
 mod list_devices;
-mod utils;
 mod vban;
 
 use clap::{Parser, Subcommand};

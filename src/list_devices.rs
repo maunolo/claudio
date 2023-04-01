@@ -1,7 +1,7 @@
 use anyhow::Result;
 use cpal::traits::{DeviceTrait, HostTrait};
 
-use crate::utils::cpal::Device;
+use rusty_vban::utils::cpal::Device;
 
 pub fn list_devices() -> Result<()> {
     let host = cpal::default_host();

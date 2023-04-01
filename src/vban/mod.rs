@@ -1,8 +1,7 @@
 use anyhow::Result;
 use clap::{Args, Subcommand};
 
-mod emitter;
-mod receptor;
+use rusty_vban::{emitter, receptor};
 
 #[derive(Subcommand, Debug)]
 pub enum Commands {
@@ -76,8 +75,27 @@ pub struct EmitterArgs {
 
 pub fn run(command: Commands) -> Result<()> {
     match command {
-        Commands::Receptor(args) => receptor::receptor(args)?,
-        Commands::Emitter(args) => emitter::emitter(args)?,
+        Commands::Receptor(args) => {
+            receptor::ReceptorBuilder::default()
+                .ip_address(args.ip_address)
+                .port(args.port)
+                .stream_name(args.stream_name)
+                .channels(args.channels)
+                .latency(args.latency)
+                .device(args.device)
+                .build()?
+                .start()?;
+        }
+        Commands::Emitter(args) => {
+            emitter::EmitterBuilder::default()
+                .ip_address(args.ip_address)
+                .port(args.port)
+                .stream_name(args.stream_name)
+                .channels(args.channels)
+                .device(args.device)
+                .build()?
+                .start()?;
+        }
     }
 
     Ok(())
