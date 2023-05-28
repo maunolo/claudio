@@ -1,11 +1,11 @@
 // #![windows_subsystem = "windows"] // Hide console window on Windows
 
-mod list_devices;
+mod tools;
 mod vban;
 
-use clap::{Parser, Subcommand};
+use clap::{Args, Parser, Subcommand};
 
-use list_devices::list_devices;
+use tools::{default_input, default_output, list_backends, list_devices};
 
 #[derive(Parser, Debug)]
 #[command(
@@ -37,7 +37,19 @@ enum Commands {
         command: vban::Commands,
     },
     /// List audio devices
-    ListDevices,
+    ListDevices(BackendArgs),
+    /// List audio hosts
+    ListBackends,
+    /// Default output device
+    DefaultOutput(BackendArgs),
+    /// Default input device
+    DefaultInput(BackendArgs),
+}
+
+#[derive(Args, Debug)]
+pub struct BackendArgs {
+    #[arg(short = 'b', default_value = "default")]
+    backend: String,
 }
 
 fn main() {
@@ -49,8 +61,23 @@ fn main() {
                 eprintln!("Error: {}", e);
             }
         }
-        Commands::ListDevices => {
-            if let Err(e) = list_devices() {
+        Commands::ListDevices(args) => {
+            if let Err(e) = list_devices(Some(&args.backend)) {
+                eprintln!("Error: {}", e);
+            }
+        }
+        Commands::DefaultOutput(args) => {
+            if let Err(e) = default_output(Some(&args.backend)) {
+                eprintln!("Error: {}", e);
+            }
+        }
+        Commands::DefaultInput(args) => {
+            if let Err(e) = default_input(Some(&args.backend)) {
+                eprintln!("Error: {}", e);
+            }
+        }
+        Commands::ListBackends => {
+            if let Err(e) = list_backends() {
                 eprintln!("Error: {}", e);
             }
         }

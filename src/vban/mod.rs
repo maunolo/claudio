@@ -36,12 +36,24 @@ pub struct ReceptorArgs {
     #[arg(short = 'p', default_value = "6980")]
     port: u16,
 
-    /// The output audio device name to use or "default",
+    /// The audio device name to use or "default",
     /// you can use the "list-devices" command
-    /// to list all available output device names
+    /// to list all available device names
     /// (e.g. "default")
     #[arg(short = 'd', default_value = "default")]
     device: String,
+
+    /// The audio device type to use
+    /// depending on the OS the device names can be the same
+    /// for both input and output devices so you can use this
+    /// (e.g. "output")
+    #[arg(short = 't', default_value = "output")]
+    device_type: String,
+
+    /// The audio backend to use: ALSA, JACK
+    /// (e.g. "default")
+    #[arg(short = 'b', default_value = "default")]
+    backend: String,
 }
 
 #[derive(Args, Debug)]
@@ -71,6 +83,18 @@ pub struct EmitterArgs {
     /// (e.g. "default")
     #[arg(short = 'd', default_value = "default")]
     device: String,
+
+    /// The audio device type to use
+    /// depending on the OS the device names can be the same
+    /// for both input and output devices so you can use this
+    /// (e.g. "input")
+    #[arg(short = 't', default_value = "input")]
+    device_type: String,
+
+    /// The audio backend to use: ALSA, JACK
+    /// (e.g. "default")
+    #[arg(short = 'b', default_value = "default")]
+    backend: String,
 }
 
 pub fn run(command: Commands) -> Result<()> {
@@ -83,6 +107,8 @@ pub fn run(command: Commands) -> Result<()> {
                 .channels(args.channels)
                 .latency(args.latency)
                 .device(args.device)
+                .device_type(args.device_type)
+                .backend(args.backend)
                 .build()?
                 .start()?;
         }
@@ -93,6 +119,8 @@ pub fn run(command: Commands) -> Result<()> {
                 .stream_name(args.stream_name)
                 .channels(args.channels)
                 .device(args.device)
+                .device_type(args.device_type)
+                .backend(args.backend)
                 .build()?
                 .start()?;
         }
