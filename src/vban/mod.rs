@@ -50,7 +50,9 @@ pub struct ReceptorArgs {
     #[arg(short = 't', default_value = "output")]
     device_type: String,
 
-    /// The audio backend to use: ALSA, JACK
+    /// The audio backend to use:
+    /// Linux - ALSA, JACK
+    /// Windows - WASAPI
     /// (e.g. "default")
     #[arg(short = 'b', default_value = "default")]
     backend: String,
