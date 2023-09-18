@@ -1,7 +1,10 @@
 use anyhow::Result;
 use clap::{Args, Subcommand};
 
-use rusty_vban::{emitter, receptor};
+use rusty_vban::{
+    emitter::{self, EmitterOptions},
+    receptor::{self, ReceptorOptions},
+};
 
 #[derive(Subcommand, Debug)]
 pub enum Commands {
@@ -112,7 +115,7 @@ pub fn run(command: Commands) -> Result<()> {
                 .device_type(args.device_type)
                 .backend(args.backend)
                 .build()?
-                .start()?;
+                .run(ReceptorOptions { retry: true })?;
         }
         Commands::Emitter(args) => {
             emitter::EmitterBuilder::default()
@@ -124,7 +127,7 @@ pub fn run(command: Commands) -> Result<()> {
                 .device_type(args.device_type)
                 .backend(args.backend)
                 .build()?
-                .start()?;
+                .run(EmitterOptions { retry: true })?;
         }
     }
 
